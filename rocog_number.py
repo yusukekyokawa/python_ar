@@ -1,25 +1,12 @@
 import cv2
 import numpy as np
-from chainer import Chain, serializers
-import chainer.functions as F
-import chainer.links as L
-
-
-# 多層パーセプトロンモデルの設定
-class MyMLP(Chain):
-    # 入力784、中間層500、出力10次元
-    def __init__(self, n_in=784, n_units=500, n_out=10):
-        super(MyMLP, self).__init__(
-            l1=L.Linear(n_in, n_units),
-            l2=L.Linear(n_units, n_units),
-            l3=L.Linear(n_units, n_out),
-        )
-    # ニューラルネットの構造
-    def __call__(self, x):
-        h1 = F.relu(self.l1(x))
-        h2 = F.relu(self.l2(h1))
-        y = self.l3(h2)
-        return y
+import keras
+from keras.datasets import mnist
+import matplotlib.pyplot as plt
+from keras.models import Sequential
+from keras.layers import Dense, Dropout
+from keras.optimizers import Adam
+from keras.models import load_model
 
 
 def preprocessing(img):
@@ -38,8 +25,7 @@ def preprocessing(img):
 
 def main():
     # 学習済みモデルの読み込み
-    net = MyMLP()
-    serializers.load_npz('my.model2', net)
+    model = load_model('my_model.h5')
     # Webカメラの映像表示
     capture = cv2.VideoCapture(0)
     if capture.isOpened() is False:
@@ -56,7 +42,7 @@ def main():
         # Eキーで処理実行
         if k == 101:
             img = preprocessing(image)
-            num = net(img)
+            num = model.predict(img)
             # cv2.imwrite("img.jpg",img)
             print(num.data)
             print(np.argmax(num.data))
