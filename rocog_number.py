@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 import keras
 from keras.datasets import mnist
-import matplotlib.pyplot as plt
 from keras.models import Sequential
 from keras.layers import Dense, Dropout
 from keras.optimizers import Adam
@@ -14,7 +13,7 @@ def preprocessing(img):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img = cv2.GaussianBlur(img, (3, 3), 0)
     img = cv2.resize(img, (28, 28))
-    res, img = cv2.threshold(img, 70 , 255, cv2.THRESH_BINARY)
+    res, img = cv2.threshold(img,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
     img = 255 - img
     img = img.astype(np.float32)
     cv2.imwrite("img.jpg",img)
